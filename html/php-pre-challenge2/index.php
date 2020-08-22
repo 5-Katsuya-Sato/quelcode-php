@@ -1,7 +1,7 @@
 <?php
 $array = explode(',', $_GET['array']);
 
-// 修正はここから
+// 修正はここから、環境の確認。
 for ($i = 0; $i < count($array); $i++) {
 
 }
