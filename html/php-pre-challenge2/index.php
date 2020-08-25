@@ -17,10 +17,9 @@ for ($i = 0; $i < count($array); $i++) {
 echo "<pre>";
 print_r($array);
 echo "</pre>";
-?>
 
 
-
+/*
 <?php
 //explode ( 区切り文字、文字列 )　　分割した文字列の配列が返される
 $array = explode(',', $_GET['array']);
@@ -56,4 +55,4 @@ while($count < count($array)) {
 echo "<pre>";
 print_r($sorted_ary);
 echo "</pre>";
-?>
+?>*/
