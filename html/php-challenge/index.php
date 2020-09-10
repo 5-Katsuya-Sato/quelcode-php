@@ -223,7 +223,6 @@ foreach ($posts as $post):
 <div class="msg">
 	<?php
 		$post_a = (int)$post['rt_post_id'];
-		// if(!$post_a === 0):  コレでダメなのはなぜ？
 		if($post_a > 0):
 	?>
 	<p><?php print($post['rt_name']); ?>さんがRTしました</p>
@@ -240,7 +239,7 @@ foreach ($posts as $post):
 			$member['id']
 		));
 		$rt_count = $rt_counts->fetch();
-		// DBを読み取って、色を変えるためのコード　ログインしている人が今のターンの投稿をRTしていたら　(色を変化させてあげる)　
+		// DBを読み取って、色を変えるためのコード　ログインしている人が今のターンの投稿をRTしていたら　(色を変化させてあげる)　　ログインしている人が、(rt_post_idが0じゃない時)今のターンのrt_post_idの投稿をRTしていたら
 		if ((int)$rt_count['countrt'] === 1):
 		?>
 		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:green;"></i></a>
