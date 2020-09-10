@@ -93,7 +93,7 @@ if (isset($_REQUEST['retweet'])) {
 		));
 	$count_of_rt = $count_of_rts->fetch();
 	
-	//URLの値がidのrt_post_idを取る　後で意味のある名前に変える 
+	//URLの値がidのrt_post_idを取る
 	$rtpostid_urls = $db->prepare('SELECT rt_post_id FROM posts WHERE id=?');
 	$rtpostid_urls->execute(array($_REQUEST['retweet']));
 	$rtpostid_url = $rtpostid_urls->fetch();
