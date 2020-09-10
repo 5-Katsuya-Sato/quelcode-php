@@ -247,7 +247,7 @@ foreach ($posts as $post):
 		<?php
 		else:
 		?>
-		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:black;"></i></a>
+		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:gray;"></i></a>
 		<?php
 		endif;
 		?>
@@ -279,11 +279,11 @@ foreach ($posts as $post):
 		$gd_count = $gd_counts->fetch();
 		if($gd_count['countgd']==1):
 	?>
-		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-thumbs-up" style="color:yellow;"></i></a>
+		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-heart" style="color:red;"></i></a>
 		<?php 
 		else:
 		?>
-		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="far fa-thumbs-up"></i></a>
+		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="far fa-heart" style="color:gray;"></i></a>
 		<?php
 		endif;
 		?>
