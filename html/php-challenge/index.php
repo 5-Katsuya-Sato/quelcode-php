@@ -241,7 +241,7 @@ foreach ($posts as $post):
 		));
 		$rt_count = $rt_counts->fetch();
 		// DBを読み取って、色を変えるためのコード　ログインしている人が今のターンの投稿をRTしていたら　(色を変化させてあげる)　
-		if ($rt_count['countrt']==1):
+		if ((int)$rt_count['countrt'] === 1):
 		?>
 		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:green;"></i></a>
 		<?php
