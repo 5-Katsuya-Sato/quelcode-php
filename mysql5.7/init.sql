@@ -1,3 +1,10 @@
+CREATE TABLE `goods` (
+      `good_id` int(11) NOT NULL AUTO_INCREMENT,
+      `post_id` int(11) NOT NULL,
+      `member_id` int(11) NOT NULL,
+      PRIMARY KEY (`good_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
 CREATE TABLE `members` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `name` varchar(255) NOT NULL,
@@ -14,8 +21,11 @@ CREATE TABLE `posts` (
       `message` text NOT NULL,
       `member_id` int(11) NOT NULL,
       `reply_post_id` int(11) NOT NULL,
+      `rt_post_id` int(11) NOT NULL,
+      `rt_member_id` int(11) NOT NULL,
       `created` datetime NOT NULL,
       `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      `rt_name` text NOT NULL,
       PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
