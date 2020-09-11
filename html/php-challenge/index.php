@@ -85,6 +85,13 @@ if (isset($_REQUEST['retweet'])) {
 	$rt_posts->execute(array($_REQUEST['retweet']));
 	$rt_post = $rt_posts->fetch();
 
+	//URLの値がidのrt_post_idを取る
+	$rtpostid_urls = $db->prepare('SELECT rt_post_id FROM posts WHERE id=?');
+	$rtpostid_urls->execute(array($_REQUEST['retweet']));
+	$rtpostid_url = $rtpostid_urls->fetch();
+
+	$rtpostid_int = (int)$rtpostid_url['rt_post_id'];
+
 	//  ログインしている人がRT済みかどうかの値を取得。　$_REQUEST['retweet']の値がpostsテーブルのrt_post_idに存在しているか（RTされているかどうか）検索
 	$count_of_rts = $db->prepare('SELECT COUNT(*) AS retweetcount FROM posts WHERE rt_post_id=? AND rt_member_id=?');
 	$count_of_rts->execute(array(
@@ -92,13 +99,7 @@ if (isset($_REQUEST['retweet'])) {
 		$member['id']
 		));
 	$count_of_rt = $count_of_rts->fetch();
-	
-	//URLの値がidのrt_post_idを取る
-	$rtpostid_urls = $db->prepare('SELECT rt_post_id FROM posts WHERE id=?');
-	$rtpostid_urls->execute(array($_REQUEST['retweet']));
-	$rtpostid_url = $rtpostid_urls->fetch();
 
-	$rtpostid_int = (int)$rtpostid_url['rt_post_id'];
 	//postsテーブルにURLの値が存在する時（セキュリティ）
 	if($rt_post['rtcount']==1){
 
@@ -106,10 +107,8 @@ if (isset($_REQUEST['retweet'])) {
 		$rt_message->execute(array($_REQUEST['retweet']));
 		$rt_table = $rt_message->fetch();
 
-		// ログインしている人が、urlのidの投稿をRTしていない時（ログイン中の人によってurlのidの投稿がRTされていないとき）
-		if(empty($count_of_rt['retweetcount'])) {
-			if($rtpostid_int === 0){
-				//dbへの挿入　RTする時に必要な情報　message,member_id,rt_post_id,rt_member_id　postsに挿入。setで指定してる列の順番をpostsと同じ順番に揃える。
+		if($rtpostid_int === 0){
+			if(empty($count_of_rt['retweetcount'])){
 				$retweets = $db->prepare('INSERT INTO posts SET message=?, member_id=?, rt_post_id=?, rt_member_id=?, rt_name=?, created=now()');
 				$retweets->execute(array(
 					$rt_table['message'],
@@ -120,6 +119,22 @@ if (isset($_REQUEST['retweet'])) {
 				));
 				header('Location: index.php'); exit();
 			} else {
+				$dlretweets = $db->prepare('DELETE FROM posts WHERE rt_post_id=? AND rt_member_id=?');
+				$dlretweets->execute(array(
+					$_REQUEST['retweet'],
+					$member['id']
+				));
+				header('Location: index.php'); exit();
+			}
+		} else{
+			$count_rts = $db->prepare('SELECT COUNT(*) AS rtcnt FROM posts WHERE rt_post_id=? AND rt_member_id=?');
+			$count_rts->execute(array(
+				$rt_table['rt_post_id'],
+				$member['id']
+				));
+			$count_rt = $count_rts->fetch();
+
+			if(empty($count_rt['rtcnt'])) {
 				$already_retweets = $db->prepare('INSERT INTO posts SET message=?, member_id=?, rt_post_id=?, rt_member_id=?, rt_name=?, created=now()');
 				$already_retweets->execute(array(
 					$rt_table['message'], 
@@ -129,19 +144,14 @@ if (isset($_REQUEST['retweet'])) {
 					$member['name']
 				));
 				header('Location: index.php'); exit();
+			} else {
+				$dlrts = $db->prepare('DELETE FROM posts WHERE id=?');
+				$dlrts->execute(array($_REQUEST['retweet']));
+				header('Location: index.php'); exit();
 			}
-			
-		} elseif(!empty($count_of_rt['retweetcount']))  {
-			$dlretweets = $db->prepare('DELETE FROM posts WHERE rt_post_id=? AND rt_member_id=?');
-			$dlretweets->execute(array(
-				$_REQUEST['retweet'],
-				$member['id']
-			));
-			header('Location: index.php'); exit();
 		}
 	}
 }
-
 
 // 投稿を取得する
 $page = $_REQUEST['page'];
@@ -360,5 +370,3 @@ if ($page < $maxPage) {
 </div>
 </body>
 </html>
-
-
