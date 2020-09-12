@@ -50,29 +50,56 @@ if(isset($_REQUEST['good'])){
 	//直下のif文で、postsに、goodボタンが押された投稿と同じidを持つ投稿が存在することを確認する（セキュリティ目的）。その次に、入れ子ifで、goodボタンパラメータと同じidがgoodsテーブルに存在しているかを確かめる処理を書く
 	if($gd_post['count']=1) {
 		// いいねされていなかったら、その$requestのidをpost_idにいれる
-		if(empty($count_of_gd['gdcount'])) {
-			if($rtpostid_gd === 0){
+		if($rtpostid_gd === 0){
+			$gdzero_cnts = $db->prepare('SELECT COUNT(*) AS count FROM goods WHERE post_id=? AND member_id=?');
+			$gdzero_cnts->execute(array(
+				$_REQUEST['good'],
+				$member['id']
+			));
+			$gdzero_cnt = $gdzero_cnts->fetch();
+			
+			if(empty($gdzero_cnt['count'])) {
 				$goods = $db->prepare('INSERT INTO goods SET post_id=?, member_id=?');
 				$goods->execute(array(
 					$_REQUEST['good'],
 					$member['id']
 				));
 				header('Location: index.php'); exit();
-			} else{
-				$gooods = $db->prepare('INSERT INTO goods SET post_id=?, member_id=?');
-				$gooods->execute(array(
-					$rtpostid_gd,
+			} else {
+				$gdzero_dl = $db->prepare('DELETE FROM goods WHERE post_id=? AND member_id=?');
+				$gdzero_dl->execute(array(
+					$_REQUEST['good'],
 					$member['id']
 				));
 				header('Location: index.php'); exit();
 			}
 		} else {
-			$gd_delete = $db->prepare('DELETE FROM goods WHERE post_id=? AND member_id=?');
-			$gd_delete->execute(array(
-				$_REQUEST['good'],
+			$gdelse = $db->prepare('SELECT rt_post_id FROM posts WHERE id=?');
+			$gdelse->execute(array($_REQUEST['good']));
+			$gd_else = $gdelse->fetch();
+
+			$gdelse_cnts = $db->prepare('SELECT COUNT(*) AS gdcnt FROM goods WHERE post_id=? AND member_id=?');
+			$gdelse_cnts->execute(array(
+				$gd_else['rt_post_id'],
 				$member['id']
 			));
-			header('Location: index.php'); exit();
+			$gdelse_cnt = $gdelse_cnts->fetch();
+
+			if(empty($gdelse_cnt['gdcnt'])){
+				$gd_zero_ins = $db->prepare('INSERT INTO goods SET post_id=?, member_id=?');
+				$gd_zero_ins->execute(array(
+					$gd_else['rt_post_id'],
+					$member['id']
+				));
+				header('Location: index.php'); exit();
+			} else {
+				$gd_delete = $db->prepare('DELETE FROM goods WHERE post_id=? AND member_id=?');
+				$gd_delete->execute(array(
+					$gd_else['rt_post_id'],
+					$member['id']
+				));
+				header('Location: index.php'); exit();
+			}
 		}
 	}
 }
@@ -290,8 +317,20 @@ foreach ($posts as $post):
 			$member['id']
 		));
 		$gd_count = $gd_counts->fetch();
+
+		$gdrt_counts = $db->prepare('SELECT COUNT(*) AS gdrtcnt FROM goods WHERE post_id=? AND member_id=?');
+		$gdrt_counts->execute(array(
+			$post['rt_post_id'],
+			$member['id']
+		));
+		$gdrt_count = $gdrt_counts->fetch();
+
 		if($gd_count['countgd']==1):
 	?>
+		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-heart" style="color:red;"></i></a>
+		<?php 
+		elseif($gdrt_count['gdrtcnt']):
+		?>
 		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-heart" style="color:red;"></i></a>
 		<?php 
 		else:
