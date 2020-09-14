@@ -337,7 +337,7 @@ foreach ($posts as $post):
 		));
 		$gdrt_count = $gdrt_counts->fetch();
 
-		if($gd_count['countgd']==1):
+		if((int)$gd_count['countgd']===1):
 	?>
 		<a href="index.php?good=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-heart" style="color:red;"></i></a>
 		<?php 
