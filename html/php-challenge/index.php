@@ -128,7 +128,7 @@ if (isset($_REQUEST['retweet'])) {
 	$count_of_rt = $count_of_rts->fetch();
 
 	//postsテーブルにURLの値が存在する時（セキュリティ）
-	if($rt_post['rtcount']==1){
+	if((int)$rt_post['rtcount']===1){
 
 		$rt_message = $db->prepare('SELECT * FROM posts WHERE id=?');
 		$rt_message->execute(array($_REQUEST['retweet']));
