@@ -276,12 +276,24 @@ foreach ($posts as $post):
 			$member['id']
 		));
 		$rt_count = $rt_counts->fetch();
+		
+		//ログインしている人による、このターンのrt_post_id($post['rt_post_id']) と一致するrt_post_idのカウントを取る
+		$count_rpis = $db->prepare('SELECT COUNT(*) AS countrpi FROM posts WHERE rt_post_id=? AND rt_member_id=?');
+		$count_rpis->execute(array(
+			$post['rt_post_id'],
+			$member['id']
+		));
+		$count_rpi = $count_rpis->fetch();
 		// DBを読み取って、色を変えるためのコード　ログインしている人が今のターンの投稿をRTしていたら　(色を変化させてあげる)　　ログインしている人が、(rt_post_idが0じゃない時)今のターンのrt_post_idの投稿をRTしていたら
 		if ((int)$rt_count['countrt'] >= 1):
 		?>
 		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:green;"></i></a>
 		<?php
 		elseif($post['rt_member_id'] === $member['id']):
+		?>
+		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:green;"></i></a>
+		<?php
+		elseif(!empty($count_rpi['countrpi'])):
 		?>
 		<a href="index.php?retweet=<?php echo h($post['id'],ENT_QUOTES);?>"><i class="fas fa-retweet" style="color:green;"></i></a>
 		<?php
