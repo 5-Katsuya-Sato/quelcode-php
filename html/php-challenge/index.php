@@ -48,7 +48,7 @@ if(isset($_REQUEST['good'])){
 	$rtpostid_gd = (int)$rt_post_id['rt_post_id'];
 	
 	//直下のif文で、postsに、goodボタンが押された投稿と同じidを持つ投稿が存在することを確認する（セキュリティ目的）。その次に、入れ子ifで、goodボタンパラメータと同じidがgoodsテーブルに存在しているかを確かめる処理を書く
-	if($gd_post['count']=1) {
+	if((int)$gd_post['count']===1) {
 		// いいねされていなかったら、その$requestのidをpost_idにいれる
 		if($rtpostid_gd === 0){
 			$gdzero_cnts = $db->prepare('SELECT COUNT(*) AS count FROM goods WHERE post_id=? AND member_id=?');
